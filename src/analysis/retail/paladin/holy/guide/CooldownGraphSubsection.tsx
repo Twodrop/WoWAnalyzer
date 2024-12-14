@@ -2,7 +2,6 @@ import { TALENTS_PALADIN } from 'common/TALENTS';
 import { GapHighlight } from 'parser/ui/CooldownBar';
 import CastEfficiencyBar from 'parser/ui/CastEfficiencyBar';
 import { SubSection, useInfo } from 'interface/guide';
-import SPELLS from 'common/SPELLS';
 
 const talentsToCheck = [
   TALENTS_PALADIN.DIVINE_TOLL_TALENT,
@@ -10,6 +9,9 @@ const talentsToCheck = [
   TALENTS_PALADIN.HAND_OF_DIVINITY_TALENT,
   TALENTS_PALADIN.AURA_MASTERY_TALENT,
   TALENTS_PALADIN.BLESSING_OF_SACRIFICE_TALENT,
+  TALENTS_PALADIN.AVENGING_CRUSADER_TALENT,
+  TALENTS_PALADIN.AVENGING_WRATH_TALENT,
+  TALENTS_PALADIN.HOLY_ARMAMENTS_BULWARK_TALENT,
 ];
 
 const CooldownGraphSubsection = () => {
@@ -34,10 +36,6 @@ const CooldownGraphSubsection = () => {
         Holy Paladin is deeply reliant on its cooldown to function.{' '}
         <strong>You should use them as close to on cooldown as possible !</strong>
       </p>
-      <CastEfficiencyBar
-        spellId={SPELLS.AVENGING_WRATH.id}
-        gapHighlightMode={GapHighlight.FullCooldown}
-      />
       {talentedCooldowns.map((cooldownCheck) => (
         <CastEfficiencyBar
           key={cooldownCheck.id}

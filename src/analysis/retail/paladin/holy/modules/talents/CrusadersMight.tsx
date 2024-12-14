@@ -31,6 +31,11 @@ class CrusadersMight extends Analyzer {
   wastedHolyShockReductionCount = 0;
   holyShocksCastsLost = 0;
 
+  effectiveJudgementReductionMs = 0;
+  wastedJudgementReductionMs = 0;
+  wastedJudgementReductionCount = 0;
+  judgementCastsLost = 0;
+
   constructor(options: Options) {
     super(options);
     this.talentedCooldownReductionMs =
@@ -47,22 +52,52 @@ class CrusadersMight extends Analyzer {
   }
 
   onCast(event: CastEvent) {
-    const effectiveCdr = this.spellUsable.reduceCooldown(
+    const effectiveCdrHolyShock = this.spellUsable.reduceCooldown(
       TALENTS.HOLY_SHOCK_TALENT.id,
       this.talentedCooldownReductionMs,
     );
-    const wastedCdr = this.talentedCooldownReductionMs - effectiveCdr;
 
-    this.effectiveHolyShockReductionMs += effectiveCdr;
-    this.wastedHolyShockReductionMs += wastedCdr;
+    const effectiveCdrJudgement = this.spellUsable.reduceCooldown(
+      SPELLS.JUDGMENT_CAST_HOLY.id,
+      this.talentedCooldownReductionMs,
+    );
 
-    if (effectiveCdr === 0) {
+    const wastedCdrHolyShock = this.talentedCooldownReductionMs - effectiveCdrHolyShock;
+    const wastedCdrJudgement = this.talentedCooldownReductionMs - effectiveCdrJudgement;
+
+    this.effectiveHolyShockReductionMs += effectiveCdrHolyShock;
+    this.wastedHolyShockReductionMs += wastedCdrHolyShock;
+
+    this.effectiveJudgementReductionMs += effectiveCdrJudgement;
+    this.wastedJudgementReductionMs += wastedCdrJudgement;
+
+    if (effectiveCdrHolyShock === 0) {
       this.wastedHolyShockReductionCount += 1;
       const timeWasted =
         this.talentedCooldownReductionMs +
         this.globalCooldown.getGlobalCooldownDuration(SPELLS.CRUSADER_STRIKE.id);
       const holyShockCooldown = this.spellUsable.fullCooldownDuration(TALENTS.HOLY_SHOCK_TALENT.id);
       this.holyShocksCastsLost += timeWasted / holyShockCooldown;
+
+      /*mark the event on the timeline
+      addInefficientCastReason(
+        event,
+        defineMessage({
+          id: 'paladin.holy.modules.talents.crusadersMight.inefficientCast',
+          message:
+            'Holy Shock was off cooldown when you cast Crusader Strike. You should cast Holy Shock before Crusader Strike for maximum healing or damage.',
+        }),
+      );
+      */
+    }
+
+    if (effectiveCdrJudgement === 0) {
+      this.wastedJudgementReductionCount += 1;
+      const timeWasted =
+        this.talentedCooldownReductionMs +
+        this.globalCooldown.getGlobalCooldownDuration(SPELLS.CRUSADER_STRIKE.id);
+      const judgementCooldown = this.spellUsable.fullCooldownDuration(SPELLS.JUDGMENT_CAST_HOLY.id);
+      this.judgementCastsLost += timeWasted / judgementCooldown;
 
       // mark the event on the timeline
       addInefficientCastReason(
@@ -88,6 +123,17 @@ class CrusadersMight extends Analyzer {
     };
   }
 
+  get holyJudgementMissedThresholds() {
+    return {
+      actual: this.wastedJudgementReductionCount,
+      isGreaterThan: {
+        minor: 0,
+        average: 2,
+        major: 5,
+      },
+      style: ThresholdStyle.NUMBER,
+    };
+  }
   suggestions(when: When) {
     when(this.holyShocksMissedThresholds).addSuggestion((suggest, actual, recommended) =>
       suggest(
@@ -135,6 +181,37 @@ class CrusadersMight extends Analyzer {
 
     return (
       <StatisticBox
+        icon={<SpellIcon spell={SPELLS.JUDGMENT_CAST_HOLY} />}
+        label="Crusader's Might CDR"
+        position={STATISTIC_ORDER.OPTIONAL(6)}
+        value={
+          <>
+            Holy Shock: {formatSeconds((this.wastedHolyShockReductionMs / 1000).toFixed(1))} <br />
+            Judgement: {formatSeconds((this.wastedJudgementReductionMs / 1000).toFixed(1))}{' '}
+          </>
+        }
+        tooltip={
+          <>
+            The overpower buff caps at two stacks. When at cap, casting Overpower will waste a buff
+            stack. This is not important during execute phase as Mortal Strike is replaced with
+            Execute which does not consume Overpower buff stacks.
+          </>
+        }
+      />
+    );
+
+    /*
+    const formatSeconds = (seconds: string) => (
+      <Trans id="paladin.holy.modules.talents.crusadersMight.formatSeconds">{seconds}s</Trans>
+    );
+
+
+
+
+
+    
+    return (
+      <StatisticBox
         position={STATISTIC_ORDER.OPTIONAL(75)}
         icon={<SpellIcon spell={TALENTS.CRUSADERS_MIGHT_TALENT} />}
         value={
@@ -150,12 +227,12 @@ class CrusadersMight extends Analyzer {
           </>
         }
         label={
-          <Trans id="paladin.holy.modules.talents.crusadersMight.cdr">Cooldown reduction</Trans>
+          "Cooldown reduction!"
         }
         tooltip={
           <>
             <Trans id="paladin.holy.modules.talents.crusadersMight.tooltip">
-              You cast Crusader Strike <b>{this.wastedHolyShockReductionCount}</b> time
+              You cast Crusader Strike <b>{this.wastedHolyShockReductionCount}</b> timeeeee
               {this.wastedHolyShockReductionCount === 1 ? '' : 's'} when Holy Shock was off
               cooldown.
               <br />
@@ -168,7 +245,7 @@ class CrusadersMight extends Analyzer {
           </>
         }
       />
-    );
+    );*/
   }
 }
 

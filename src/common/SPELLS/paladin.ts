@@ -230,6 +230,11 @@ const spells = {
     name: 'Devotion Aura',
     icon: 'spell_holy_devotionaura',
   },
+  AVENGING_CRUSADER: {
+    id: 216331,
+    name: 'Avenging Crusader',
+    icon: 'ability_paladin_veneration',
+  },
   AVENGING_CRUSADER_HEAL_NORMAL: {
     id: 216371,
     name: 'Avenging Crusader',

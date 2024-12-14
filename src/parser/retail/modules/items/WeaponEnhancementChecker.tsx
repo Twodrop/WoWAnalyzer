@@ -30,6 +30,9 @@ const MAX_ENHANCEMENT_IDS = [
   ITEMS.EARTHLIVING_WEAPON.effectId,
   ITEMS.TIDECALLERS_GUARD.effectId,
   ITEMS.THUNDERSTRIKE_WARD.effectId,
+  // paladin effects
+  ITEMS.RITE_OF_ADJURATION.effectId,
+  ITEMS.RITE_OF_SANCTIFICATION.effectId,
 ] as const satisfies number[];
 
 class WeaponEnhancementChecker extends BaseWeaponEnhancementChecker {

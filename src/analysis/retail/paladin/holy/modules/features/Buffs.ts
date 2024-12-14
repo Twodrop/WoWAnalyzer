@@ -12,7 +12,6 @@ class Buffs extends CoreAuras {
     return [
       {
         spellId: SPELLS.INFUSION_OF_LIGHT.id,
-        triggeredBySpellId: TALENTS.HOLY_SHOCK_TALENT.id,
         enabled: combatant.hasTalent(TALENTS.HOLY_SHOCK_TALENT),
         timelineHighlight: true,
       },

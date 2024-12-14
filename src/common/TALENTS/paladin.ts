@@ -87,7 +87,7 @@ const talents = {
     definitionIds: [{ id: 107476, specId: 66 }],
   },
   AVENGING_CRUSADER_TALENT: {
-    id: 394088,
+    id: 216331,
     name: 'Avenging Crusader',
     icon: 'ability_paladin_veneration',
     maxRanks: 1,
@@ -977,6 +977,17 @@ const talents = {
     maxRanks: 1,
     entryIds: [117882],
     definitionIds: [{ id: 122894, specId: 66 }],
+  },
+  HOLY_ARMAMENTS_BULWARK_TALENT: {
+    id: 432459,
+    name: 'Holy Bulwark',
+    icon: 'inv_ability_lightsmithpaladin_holybulwark',
+    maxRanks: 1,
+    entryIds: [117882],
+    definitionIds: [
+      { id: 122894, specId: 66 },
+      { id: 122894, specId: 65 },
+    ],
   },
   HOLY_BLADE_TALENT: {
     id: 383342,

@@ -2,14 +2,19 @@ import { formatNumber, formatPercentage } from 'common/format';
 import SPELLS from 'common/SPELLS';
 import TALENTS from 'common/TALENTS/paladin';
 import Analyzer, { Options, SELECTED_PLAYER } from 'parser/core/Analyzer';
-import Events, { BeaconHealEvent, HealEvent } from 'parser/core/Events';
+import Events, {
+  BeaconHealEvent,
+  HealEvent,
+  ApplyBuffEvent,
+  RemoveBuffEvent,
+} from 'parser/core/Events';
 import SpellUsable from 'parser/shared/modules/SpellUsable';
 import BoringSpellValueText from 'parser/ui/BoringSpellValueText';
 import ItemHealingDone from 'parser/ui/ItemHealingDone';
 import Statistic from 'parser/ui/Statistic';
 import STATISTIC_CATEGORY from 'parser/ui/STATISTIC_CATEGORY';
 import STATISTIC_ORDER from 'parser/ui/STATISTIC_ORDER';
-
+import Abilities from 'parser/core/modules/Abilities';
 import BeaconHealSource from '../beacons/BeaconHealSource';
 
 /**
@@ -21,11 +26,13 @@ import BeaconHealSource from '../beacons/BeaconHealSource';
  */
 class AvengingCrusader extends Analyzer {
   static dependencies = {
+    abilities: Abilities,
     beaconHealSource: BeaconHealSource,
     spellUsable: SpellUsable,
   };
 
   protected spellUsable!: SpellUsable;
+  protected abilities!: Abilities;
 
   healing = 0;
   healingTransfered = 0;
@@ -83,18 +90,20 @@ class AvengingCrusader extends Analyzer {
     this.beaconOverhealing += event.overheal || 0;
   }
 
-  onApplyBuff() {
+  onApplyBuff(event: ApplyBuffEvent) {
     this.spellUsable.applyCooldownRateChange(
       [SPELLS.JUDGMENT_CAST_HOLY.id, SPELLS.CRUSADER_STRIKE.id],
       1.3,
     );
+    this.abilities.increaseMaxCharges(event, SPELLS.CRUSADER_STRIKE.id, 1);
   }
 
-  onRemoveBuff() {
+  onRemoveBuff(event: RemoveBuffEvent) {
     this.spellUsable.removeCooldownRateChange(
       [SPELLS.JUDGMENT_CAST_HOLY.id, SPELLS.CRUSADER_STRIKE.id],
       1.3,
     );
+    this.abilities.decreaseMaxCharges(event, SPELLS.CRUSADER_STRIKE.id, 1);
   }
 
   get critRate() {

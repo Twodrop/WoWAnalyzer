@@ -38,6 +38,7 @@ class Abilities extends CoreAbilities {
       {
         spell: SPELLS.CRUSADER_STRIKE.id,
         category: SPELL_CATEGORY.ROTATIONAL,
+        charges: 1,
         cooldown: hasted(7.8),
         gcd: {
           base: 1500,
@@ -53,7 +54,7 @@ class Abilities extends CoreAbilities {
       {
         spell: [SPELLS.JUDGMENT_CAST_HOLY.id, SPELLS.JUDGMENT_CAST.id],
         category: SPELL_CATEGORY.ROTATIONAL,
-        cooldown: hasted(12),
+        cooldown: hasted(11),
         gcd: {
           base: 1500,
         },
@@ -194,9 +195,6 @@ class Abilities extends CoreAbilities {
         category: SPELL_CATEGORY.UTILITY,
         charges: combatant.hasTalent(TALENTS.CAVALIER_TALENT) ? 2 : 1,
         cooldown: 45,
-        gcd: {
-          base: 1500,
-        },
         enabled: combatant.hasTalent(TALENTS.DIVINE_STEED_TALENT),
       },
       {
